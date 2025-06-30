@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holistiq EC Launchpad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 0.75rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 90%;
+            max-width: 600px;
+        }
+        .widget {
+            transition: all 0.2s ease-in-out;
+        }
+        .widget:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+         /* Custom scrollbar for better aesthetics */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Main Container -->
+    <div id="app-container">
+
+        <!-- SCREEN 1: Onboarding Survey -->
+        <div id="survey-screen" class="min-h-screen flex items-center justify-center p-4 fade-in">
+            <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-2xl shadow-xl">
+                <div class="text-center mb-8">
+                    <svg class="mx-auto h-12 w-auto text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                    <h1 class="text-3xl font-bold text-slate-900 mt-4">Welcome to the Holistiq EC Launchpad</h1>
+                    <p class="text-slate-500 mt-2">Let's find the best resources for your school. Answer two quick questions to personalize your experience.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <label class="text-lg font-semibold text-slate-700">1. Which statement best describes your school's current co-curricular activities?</label>
+                        <div id="q1-options" class="mt-4 space-y-3">
+                            <button data-value="Basic" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">We don't currently offer structured activities, or they only happen for annual events.</p>
+                            </button>
+                            <button data-value="Developing" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">We have some ongoing clubs, but participation is low or scheduling is inconsistent.</p>
+                            </button>
+                            <button data-value="Established" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">We have a variety of structured, ongoing programs with strong student participation.</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="question2-container" class="hidden">
+                        <label class="text-lg font-semibold text-slate-700">2. What is your current top priority for improving your EC programs?</label>
+                        <div id="q2-options" class="mt-4 space-y-3">
+                           <button data-value="expand" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">Starting new programs and expanding the variety of our offerings.</p>
+                            </button>
+                            <button data-value="enhance" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">Enhancing the quality and student leadership in our existing programs.</p>
+                            </button>
+                            <button data-value="integrate" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <p class="font-medium">Integrating our programs with academic goals and using data for improvement.</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Main Dashboard -->
+        <div id="dashboard-screen" class="hidden">
+            <div class="flex h-screen bg-white">
+                <!-- Sidebar -->
+                <nav class="w-64 bg-slate-800 text-white p-5 flex flex-col">
+                    <div class="flex items-center space-x-3 mb-10">
+                         <svg class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        <span class="text-xl font-bold">Holistiq</span>
+                    </div>
+                    <div class="space-y-2">
+                        <a href="#" class="flex items-center px-4 py-2.5 bg-slate-700 text-white rounded-lg"><i data-lucide="layout-dashboard" class="mr-3 h-5 w-5"></i>Dashboard</a>
+                        <a href="#" id="sidebar-resources" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-700 rounded-lg"><i data-lucide="book-open" class="mr-3 h-5 w-5"></i>Resources</a>
+                        <a href="#" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-700 rounded-lg"><i data-lucide="settings" class="mr-3 h-5 w-5"></i>Settings</a>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="p-4 bg-slate-700/50 rounded-lg text-center">
+                            <p class="text-sm text-slate-300">Unlock your school's full potential.</p>
+                            <button class="w-full mt-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors">Upgrade to Pro</button>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Main Content -->
+                <main class="flex-1 bg-slate-50 p-6 md:p-10 overflow-y-auto custom-scrollbar">
+                    <!-- Header -->
+                    <header class="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 id="dashboard-title" class="text-3xl font-bold text-slate-900">Your EC Launchpad</h1>
+                            <p id="dashboard-subtitle" class="text-slate-500 mt-1">Here are some tools and resources to get you started.</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <button class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="bell" class="text-slate-500"></i></button>
+                            <div class="flex items-center space-x-2">
+                                <img src="https://placehold.co/40x40/E2E8F0/475569?text=A" alt="Admin" class="rounded-full">
+                                <div>
+                                    <p class="font-semibold text-sm">School Admin</p>
+                                    <p class="text-xs text-slate-500">Greenwood High</p>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Audit Progress Banner -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-8 flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-800">Complete Your School's EC Audit</h3>
+                            <p class="text-slate-500 text-sm mt-1">Answer a few more questions to unlock your personalized growth plan.</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-40 bg-slate-200 rounded-full h-2.5">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 15%"></div>
+                            </div>
+                            <span class="font-semibold text-indigo-600">15%</span>
+                            <button class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">Continue Audit</button>
+                        </div>
+                    </div>
+
+                    <!-- Widgets Grid -->
+                    <div id="widgets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- WIDGET: AI Curriculum Builder -->
+                        <div id="widget-ai-builder" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-green-500 mb-4"><i data-lucide="brain-circuit" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">AI Curriculum Builder</h3>
+                            <p class="text-slate-500 text-sm mt-1">Generate a complete curriculum for any club in minutes.</p>
+                        </div>
+                        
+                        <!-- WIDGET: Program Starter Kits -->
+                        <div id="widget-starter-kit" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-cyan-500 mb-4"><i data-lucide="rocket" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Program Starter Kits</h3>
+                            <p class="text-slate-500 text-sm mt-1">One-page guides to launch your first clubs successfully.</p>
+                        </div>
+
+                        <!-- WIDGET: Student Engagement Toolkit -->
+                        <div id="widget-engagement-toolkit" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-orange-500 mb-4"><i data-lucide="users" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Student Engagement Toolkit</h3>
+                            <p class="text-slate-500 text-sm mt-1">Templates and guides to boost participation and leadership.</p>
+                        </div>
+
+                        <!-- WIDGET: Resource Hub -->
+                        <div id="widget-resource-hub" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-teal-500 mb-4"><i data-lucide="library" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Resource Hub</h3>
+                            <p class="text-slate-500 text-sm mt-1">A library of practical resources, templates, and guides.</p>
+                        </div>
+
+                        <!-- WIDGET: Gap Analysis -->
+                        <div id="widget-gap-analysis" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-blue-500 mb-4"><i data-lucide="pie-chart" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">EC Program Gap Analysis</h3>
+                            <p class="text-slate-500 text-sm mt-1">Visualize your offerings and discover opportunities.</p>
+                        </div>
+
+                        <!-- WIDGET: Budget Planner -->
+                        <div id="widget-budget-planner" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-amber-500 mb-4"><i data-lucide="piggy-bank" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Club Budget Planner</h3>
+                            <p class="text-slate-500 text-sm mt-1">Create and export simple budgets for your clubs.</p>
+                        </div>
+
+                        <!-- WIDGET: Certificate Generator -->
+                        <div id="widget-certificate-generator" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-purple-500 mb-4"><i data-lucide="award" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Certificate Generator</h3>
+                            <p class="text-slate-500 text-sm mt-1">Instantly print certificates for student achievement.</p>
+                        </div>
+
+                        <!-- WIDGET: Parent Communication Pack -->
+                        <div id="widget-parent-pack" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-sky-500 mb-4"><i data-lucide="mail" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Parent Communication Pack</h3>
+                            <p class="text-slate-500 text-sm mt-1">Save time with pre-written templates for parent updates.</p>
+                        </div>
+                        
+                        <!-- WIDGET: Event Calendar -->
+                        <div id="widget-event-calendar" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-rose-500 mb-4"><i data-lucide="calendar-days" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Inter-School Event Calendar</h3>
+                            <p class="text-slate-500 text-sm mt-1">Discover upcoming regional competitions and events.</p>
+                        </div>
+
+                        <!-- WIDGET: Upgrade Teaser -->
+                        <div class="p-6 rounded-xl bg-indigo-600 text-white flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-1">
+                            <div>
+                                <h3 class="font-bold text-lg">Ready for a fully integrated system?</h3>
+                                <p class="text-indigo-200 text-sm mt-1">Manage attendance, resources, and generate comprehensive student reports with Holistiq Pro.</p>
+                            </div>
+                            <button class="mt-4 bg-white hover:bg-slate-100 text-indigo-600 font-semibold py-2 px-4 rounded-lg text-sm self-start">Learn More</button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (Initially Hidden) -->
+    <div id="modals-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE MANAGEMENT ---
+            const state = {
+                persona: null, // 'Basic', 'Developing', 'Established'
+                priority: null,
+                currentModal: null,
+            };
+
+            // --- DOM ELEMENTS ---
+            const surveyScreen = document.getElementById('survey-screen');
+            const dashboardScreen = document.getElementById('dashboard-screen');
+            const q1Options = document.getElementById('q1-options');
+            const q2Container = document.getElementById('question2-container');
+            const q2Options = document.getElementById('q2-options');
+            const dashboardTitle = document.getElementById('dashboard-title');
+            const dashboardSubtitle = document.getElementById('dashboard-subtitle');
+            const widgetsGrid = document.getElementById('widgets-grid');
+            const modalsContainer = document.getElementById('modals-container');
+            const sidebarResourcesLink = document.getElementById('sidebar-resources');
+            
+            // --- WIDGET ELEMENTS ---
+            const widgetElements = {
+                aiBuilder: document.getElementById('widget-ai-builder'),
+                gapAnalysis: document.getElementById('widget-gap-analysis'),
+                budgetPlanner: document.getElementById('widget-budget-planner'),
+                certificateGenerator: document.getElementById('widget-certificate-generator'),
+                parentPack: document.getElementById('widget-parent-pack'),
+                eventCalendar: document.getElementById('widget-event-calendar'),
+                starterKit: document.getElementById('widget-starter-kit'),
+                engagementToolkit: document.getElementById('widget-engagement-toolkit'),
+                resourceHub: document.getElementById('widget-resource-hub'),
+            };
+
+            // --- MODAL TEMPLATES ---
+            const modalTemplates = {
+                starterKit: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600"><i data-lucide="rocket" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Program Starter Kits</h2>
+                                    <p class="text-slate-500">Quick-start guides for popular club types.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">How to Launch a Sports Club</h3>
+                                <p class="text-sm text-slate-500 mt-1">A step-by-step checklist for getting your sports program off the ground.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Guide</button>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Starting a Service Club</h3>
+                                <p class="text-sm text-slate-500 mt-1">Find community partners and structure meaningful volunteer projects.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Guide</button>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Foundations of a STEM Club</h3>
+                                <p class="text-sm text-slate-500 mt-1">Ideas for engaging projects in coding, robotics, and science.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Guide</button>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Creating an Arts & Culture Club</h3>
+                                <p class="text-sm text-slate-500 mt-1">From drama to visual arts, learn how to foster creativity.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Guide</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                engagementToolkit: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600"><i data-lucide="users" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Student Engagement Toolkit</h2>
+                                    <p class="text-slate-500">Resources to boost participation and student voice.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 space-y-4">
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Gather Student Feedback</h3>
+                                <p class="text-sm text-slate-500 mt-1">Use our survey template to understand what students want from their EC programs.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Survey Template</button>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Promote Student Leadership</h3>
+                                <p class="text-sm text-slate-500 mt-1">A guide to creating meaningful leadership roles like Club President or Event Organizer.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Leadership Guide</button>
+                            </div>
+                             <div class="p-4 border rounded-lg bg-slate-50">
+                                <h3 class="font-semibold">Best Practices for Inclusive Outreach</h3>
+                                <p class="text-sm text-slate-500 mt-1">Tips for encouraging participation from underrepresented student groups.</p>
+                                <button class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="download" class="mr-1 h-4 w-4"></i>Download Outreach Guide</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                resourceHub: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center text-teal-600"><i data-lucide="library" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Resource Hub</h2>
+                                    <p class="text-slate-500">Your library of guides, templates, and best practices.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <div class="flex space-x-2 mb-4 border-b pb-3">
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-800">All</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Planning</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Engagement</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Leadership</button>
+                            </div>
+                            <div class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar pr-2">
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg">
+                                    <i data-lucide="file-text" class="h-5 w-5 text-slate-500 mr-4"></i>
+                                    <p class="flex-1 font-medium text-sm">Guide: Setting SMART Goals for Your EC Program</p>
+                                    <button class="text-sm font-semibold text-indigo-600 hover:underline">Download</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg">
+                                    <i data-lucide="file-spreadsheet" class="h-5 w-5 text-slate-500 mr-4"></i>
+                                    <p class="flex-1 font-medium text-sm">Template: Student Feedback Survey (Google Forms)</p>
+                                    <button class="text-sm font-semibold text-indigo-600 hover:underline">Copy</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg">
+                                    <i data-lucide="file-text" class="h-5 w-5 text-slate-500 mr-4"></i>
+                                    <p class="flex-1 font-medium text-sm">Guide: How to Train Student Leaders Effectively</p>
+                                    <button class="text-sm font-semibold text-indigo-600 hover:underline">Download</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg">
+                                    <i data-lucide="file-spreadsheet" class="h-5 w-5 text-slate-500 mr-4"></i>
+                                    <p class="flex-1 font-medium text-sm">Template: Risk Assessment Form for EC Activities</p>
+                                    <button class="text-sm font-semibold text-indigo-600 hover:underline">Download</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                aiBuilder: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center text-green-600"><i data-lucide="brain-circuit" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">AI Curriculum Builder</h2>
+                                    <p class="text-slate-500">Let's create a roadmap for a new club.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="club-name" class="font-medium text-sm text-slate-700">What club do you want to create?</label>
+                                    <input type="text" id="club-name" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Chess Club, Public Speaking">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="age-group" class="font-medium text-sm text-slate-700">Age Group</label>
+                                        <select id="age-group" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option>Middle School</option>
+                                            <option>High School</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="sessions" class="font-medium text-sm text-slate-700">Sessions</label>
+                                        <select id="sessions" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option>8 Weeks</option>
+                                            <option>12 Weeks</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button id="generate-curriculum" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="sparkles" class="mr-2 h-5 w-5"></i>Generate Curriculum
+                                </button>
+                            </div>
+                            <div id="curriculum-output" class="mt-6 hidden">
+                                <div class="text-center p-4" id="loading-spinner">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                                    <p class="mt-2 text-sm text-slate-500">Generating your curriculum...</p>
+                                </div>
+                                <div id="curriculum-content" class="hidden">
+                                    <h3 class="font-bold text-lg mb-2">Chess Club Curriculum (8 Weeks)</h3>
+                                    <div class="border border-slate-200 rounded-lg p-4 space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
+                                        <p><strong>Week 1: The Basics</strong> - Intro to the board and pieces. How each piece moves.</p>
+                                        <p><strong>Week 2: Opening Principles</strong> - Control the center, develop pieces, king safety.</p>
+                                        <p><strong>Week 3: Basic Tactics I</strong> - Pins, Forks, and Skewers. Practice puzzles.</p>
+                                        <p><strong>Week 4: Basic Tactics II</strong> - Discovered attacks and removing the defender.</p>
+                                        <p><strong>Week 5: Checkmate Patterns</strong> - Learn common checkmating patterns (Queen + King, etc.).</p>
+                                        <p><strong>Week 6: Mid-game Strategy</strong> - Understanding pawn structures and piece value.</p>
+                                        <p><strong>Week 7: Endgame Fundamentals</strong> - Basic king and pawn endgames.</p>
+                                        <p><strong>Week 8: Club Tournament</strong> - Put your skills to the test in a friendly competition.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                gapAnalysis: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="pie-chart" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">EC Program Gap Analysis</h2>
+                                    <p class="text-slate-500">Check the boxes for the categories you currently offer.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <h3 class="font-semibold">Select Your Program Categories:</h3>
+                                <label class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 mr-3" data-category="Sports">Sports</label>
+                                <label class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 mr-3" data-category="Arts">Arts</label>
+                                <label class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 mr-3" data-category="STEM">STEM</label>
+                                <label class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 mr-3" data-category="Leadership">Leadership</label>
+                                <label class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 mr-3" data-category="Service">Service</label>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-4">Your Program Balance:</h3>
+                                <div id="gap-chart" class="space-y-3">
+                                    <!-- Chart bars will be generated here -->
+                                </div>
+                                <p id="gap-insight" class="text-sm text-slate-500 mt-4 p-3 bg-slate-100 rounded-md">Check categories to see your analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                budgetPlanner: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                             <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600"><i data-lucide="piggy-bank" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Club Budget Planner</h2>
+                                    <p class="text-slate-500">Estimate the costs for your club.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <div class="grid grid-cols-4 gap-4 font-semibold text-sm text-slate-600 px-2 pb-2 border-b">
+                                <div>Item</div>
+                                <div class="text-center">Quantity</div>
+                                <div class="text-right">Cost/Unit ($)</div>
+                                <div class="text-right">Total ($)</div>
+                            </div>
+                            <div id="budget-items" class="mt-2 space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                                <!-- Budget items will be added here -->
+                            </div>
+                            <button id="add-budget-item" class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="plus-circle" class="mr-1 h-4 w-4"></i>Add Item</button>
+                            <div class="mt-4 pt-4 border-t flex justify-end items-center">
+                                <span class="font-bold text-lg">Total Estimated Budget:</span>
+                                <span id="total-budget" class="font-bold text-lg ml-4 w-28 text-right">$0.00</span>
+                            </div>
+                             <div class="mt-4 flex justify-end">
+                                <button class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center"><i data-lucide="download" class="mr-2 h-4 w-4"></i>Export as PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                certificateGenerator: `
+                    <div class="p-6 md:p-8">
+                         <div class="flex justify-between items-start">
+                             <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600"><i data-lucide="award" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Certificate Generator</h2>
+                                    <p class="text-slate-500">Recognize student achievement instantly.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="cert-student-name" class="font-medium text-sm text-slate-700">Student Name</label>
+                                    <input type="text" id="cert-student-name" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Alex Johnson">
+                                </div>
+                                <div>
+                                    <label for="cert-activity-name" class="font-medium text-sm text-slate-700">Club / Activity</label>
+                                    <input type="text" id="cert-activity-name" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Debate Club">
+                                </div>
+                                <div>
+                                    <label for="cert-achievement" class="font-medium text-sm text-slate-700">Achievement</label>
+                                    <input type="text" id="cert-achievement" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Outstanding Leadership">
+                                </div>
+                                <button class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center"><i data-lucide="printer" class="mr-2 h-4 w-4"></i>Print Certificate</button>
+                            </div>
+                            <div id="certificate-preview" class="border-2 border-dashed border-slate-300 rounded-lg p-6 bg-slate-50 flex flex-col items-center justify-center text-center">
+                                <i data-lucide="award" class="h-16 w-16 text-amber-400"></i>
+                                <h3 class="text-lg font-bold mt-4">Certificate of Achievement</h3>
+                                <p class="text-sm text-slate-500 mt-2">This certificate is proudly presented to</p>
+                                <p id="preview-student-name" class="text-2xl font-bold text-indigo-600 my-2">Alex Johnson</p>
+                                <p class="text-sm text-slate-500">For their participation and</p>
+                                <p id="preview-achievement" class="font-semibold my-1">Outstanding Leadership</p>
+                                <p class="text-sm text-slate-500">in the</p>
+                                <p id="preview-activity-name" class="font-semibold my-1">Debate Club</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                parentPack: `
+                     <div class="p-6 md:p-8">
+                         <div class="flex justify-between items-start">
+                             <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600"><i data-lucide="mail" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Parent Communication Pack</h2>
+                                    <p class="text-slate-500">Quick templates for your parent emails.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <label class="font-medium text-sm text-slate-700">Select a template:</label>
+                            <div id="comm-template-buttons" class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <button data-template="new-club" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">New Club</button>
+                                <button data-template="volunteer" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Volunteers</button>
+                                <button data-template="update" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Weekly Update</button>
+                                <button data-template="result" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Event Result</button>
+                            </div>
+                            <textarea id="comm-template-output" class="w-full h-48 mt-4 p-3 border border-slate-300 rounded-md bg-slate-50" readonly>Select a template to see the content here.</textarea>
+                            <button id="copy-comm-template" class="mt-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center"><i data-lucide="copy" class="mr-2 h-4 w-4"></i>Copy to Clipboard</button>
+                        </div>
+                    </div>
+                `,
+                eventCalendar: `
+                     <div class="p-6 md:p-8">
+                         <div class="flex justify-between items-start">
+                             <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600"><i data-lucide="calendar-days" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Inter-School Event Calendar</h2>
+                                    <p class="text-slate-500">Discover opportunities in your region.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <div class="flex space-x-2 mb-4 border-b pb-3">
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-800">All</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Debate</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">MUN</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Science</button>
+                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Sports</button>
+                            </div>
+                            <div class="space-y-4 max-h-80 overflow-y-auto custom-scrollbar pr-2">
+                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-center">
+                                        <p class="font-bold text-lg text-rose-600">JUL</p>
+                                        <p class="font-bold text-2xl">15</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">Regional Science Olympiad</p>
+                                        <p class="text-sm text-slate-500">Hosted by Northwood University</p>
+                                    </div>
+                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
+                                </div>
+                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-center">
+                                        <p class="font-bold text-lg text-rose-600">JUL</p>
+                                        <p class="font-bold text-2xl">28</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">Model United Nations Conference</p>
+                                        <p class="text-sm text-slate-500">City Convention Center</p>
+                                    </div>
+                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
+                                </div>
+                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
+                                    <div class="text-center">
+                                        <p class="font-bold text-lg text-rose-600">AUG</p>
+                                        <p class="font-bold text-2xl">05</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">State-level Debate Championship</p>
+                                        <p class="text-sm text-slate-500">Online Event</p>
+                                    </div>
+                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+            
+            // --- FUNCTIONS ---
+            const showScreen = (screenId) => {
+                surveyScreen.classList.add('hidden');
+                dashboardScreen.classList.add('hidden');
+                document.getElementById(screenId).classList.remove('hidden');
+                document.getElementById(screenId).classList.add('fade-in');
+            };
+
+            const updateDashboardUI = () => {
+                const personaConfig = {
+                    Basic: {
+                        title: "Let's Build Your Foundation",
+                        subtitle: "Use these starter kits and tools to launch your first programs.",
+                        widgets: ['aiBuilder', 'starterKit', 'budgetPlanner', 'parentPack', 'resourceHub']
+                    },
+                    Developing: {
+                        title: "Enhance and Engage",
+                        subtitle: "Improve program quality and boost student participation with these toolkits.",
+                        widgets: ['engagementToolkit', 'gapAnalysis', 'aiBuilder', 'certificateGenerator', 'resourceHub', 'eventCalendar']
+                    },
+                    Established: {
+                        title: "Optimize and Innovate",
+                        subtitle: "Integrate, analyze, and discover new opportunities for your programs.",
+                        widgets: ['gapAnalysis', 'eventCalendar', 'resourceHub', 'budgetPlanner', 'parentPack', 'certificateGenerator']
+                    }
+                };
+                
+                const config = personaConfig[state.persona];
+                dashboardTitle.textContent = config.title;
+                dashboardSubtitle.textContent = config.subtitle;
+
+                // Hide all widgets first
+                Object.values(widgetElements).forEach(w => w.classList.add('hidden'));
+                
+                // Show widgets based on persona
+                config.widgets.forEach(widgetKey => {
+                    if(widgetElements[widgetKey]) {
+                        widgetElements[widgetKey].classList.remove('hidden');
+                    }
+                });
+            };
+            
+            const openModal = (modalKey) => {
+                if (!modalTemplates[modalKey]) return;
+                state.currentModal = modalKey;
+                
+                const modalWrapper = document.createElement('div');
+                modalWrapper.id = `modal-${modalKey}`;
+                modalWrapper.className = 'modal-overlay fade-in';
+                modalWrapper.innerHTML = `<div class="modal-content fade-in custom-scrollbar">${modalTemplates[modalKey]}</div>`;
+                
+                modalsContainer.appendChild(modalWrapper);
+                lucide.createIcons(); // Re-initialize icons inside the new modal
+
+                // Add close event listeners
+                modalWrapper.querySelector('.modal-close').addEventListener('click', closeModal);
+                modalWrapper.addEventListener('click', (e) => {
+                    if (e.target === modalWrapper) closeModal();
+                });
+
+                // Add specific event listeners for the modal content
+                addModalEventListeners(modalKey);
+            };
+
+            const closeModal = () => {
+                if (!state.currentModal) return;
+                const modalWrapper = document.getElementById(`modal-${state.currentModal}`);
+                if (modalWrapper) {
+                    modalWrapper.remove();
+                }
+                state.currentModal = null;
+            };
+
+            const addModalEventListeners = (modalKey) => {
+                switch(modalKey) {
+                    case 'aiBuilder':
+                        document.getElementById('generate-curriculum').addEventListener('click', () => {
+                            const outputDiv = document.getElementById('curriculum-output');
+                            const spinner = document.getElementById('loading-spinner');
+                            const content = document.getElementById('curriculum-content');
+                            outputDiv.classList.remove('hidden');
+                            spinner.style.display = 'block';
+                            content.classList.add('hidden');
+                            setTimeout(() => {
+                                spinner.style.display = 'none';
+                                content.classList.remove('hidden');
+                            }, 1500);
+                        });
+                        break;
+                    case 'gapAnalysis':
+                        const checkboxes = document.querySelectorAll('#gap-analysis input[type="checkbox"]');
+                        checkboxes.forEach(cb => cb.addEventListener('change', updateGapAnalysisChart));
+                        updateGapAnalysisChart(); // Initial call
+                        break;
+                    case 'budgetPlanner':
+                        document.getElementById('add-budget-item').addEventListener('click', () => addBudgetItem());
+                        document.getElementById('budget-items').addEventListener('input', updateBudgetTotal);
+                        addBudgetItem('Basketballs', 5, 25);
+                        addBudgetItem('Team Jerseys', 15, 30);
+                        break;
+                    case 'certificateGenerator':
+                        ['cert-student-name', 'cert-activity-name', 'cert-achievement'].forEach(id => {
+                            document.getElementById(id).addEventListener('input', updateCertificatePreview);
+                        });
+                        break;
+                    case 'parentPack':
+                        document.getElementById('comm-template-buttons').addEventListener('click', (e) => {
+                            if (e.target.tagName === 'BUTTON') {
+                                updateCommTemplate(e.target.dataset.template);
+                            }
+                        });
+                        document.getElementById('copy-comm-template').addEventListener('click', copyCommTemplate);
+                        break;
+                }
+            };
+            
+            // --- MODAL SPECIFIC LOGIC ---
+            
+            const updateGapAnalysisChart = () => {
+                const chartContainer = document.getElementById('gap-chart');
+                const insightEl = document.getElementById('gap-insight');
+                const categories = ['Sports', 'Arts', 'STEM', 'Leadership', 'Service'];
+                let offeredCount = 0;
+                let offered = [];
+                let gaps = [];
+
+                chartContainer.innerHTML = ''; // Clear previous chart
+                
+                categories.forEach(cat => {
+                    const checkbox = document.querySelector(`input[data-category="${cat}"]`);
+                    const isChecked = checkbox.checked;
+                    if (isChecked) {
+                        offeredCount++;
+                        offered.push(cat);
+                    } else {
+                        gaps.push(cat);
+                    }
+                    
+                    const barHtml = `
+                        <div class="flex items-center">
+                            <div class="w-24 text-sm font-medium text-slate-600">${cat}</div>
+                            <div class="flex-1 bg-slate-200 rounded-full h-4">
+                                <div class="bg-${isChecked ? 'blue' : 'slate'}-400 h-4 rounded-full" style="width: ${isChecked ? '100%' : '10%'}"></div>
+                            </div>
+                        </div>
+                    `;
+                    chartContainer.insertAdjacentHTML('beforeend', barHtml);
+                });
+
+                if (offeredCount === 0) {
+                    insightEl.textContent = "You have a blank slate! Use the AI builder to explore ideas in any category.";
+                } else if (offeredCount === categories.length) {
+                    insightEl.textContent = "Excellent! You have a well-balanced program across all key areas.";
+                } else {
+                    insightEl.textContent = `Great start in ${offered.join(', ')}. Consider expanding into ${gaps.join(', ')} to diversify your offerings.`;
+                }
+            };
+
+            const addBudgetItem = (name = '', qty = 1, cost = 0) => {
+                const itemContainer = document.getElementById('budget-items');
+                const div = document.createElement('div');
+                div.className = 'grid grid-cols-4 gap-4 items-center budget-item-row';
+                div.innerHTML = `
+                    <input type="text" class="p-2 border border-slate-300 rounded-md text-sm" value="${name}" placeholder="Item name">
+                    <input type="number" class="p-2 border border-slate-300 rounded-md text-sm text-center" value="${qty}" min="1">
+                    <input type="number" class="p-2 border border-slate-300 rounded-md text-sm text-right" value="${cost}" min="0" step="0.01">
+                    <input type="text" class="p-2 bg-slate-100 border border-slate-200 rounded-md text-sm text-right font-semibold" value="$${(qty * cost).toFixed(2)}" readonly>
+                `;
+                itemContainer.appendChild(div);
+                updateBudgetTotal();
+            };
+
+            const updateBudgetTotal = () => {
+                let total = 0;
+                document.querySelectorAll('.budget-item-row').forEach(row => {
+                    const qty = parseFloat(row.children[1].value) || 0;
+                    const cost = parseFloat(row.children[2].value) || 0;
+                    const itemTotal = qty * cost;
+                    row.children[3].value = `$${itemTotal.toFixed(2)}`;
+                    total += itemTotal;
+                });
+                document.getElementById('total-budget').textContent = `$${total.toFixed(2)}`;
+            };
+            
+            const updateCertificatePreview = () => {
+                document.getElementById('preview-student-name').textContent = document.getElementById('cert-student-name').value;
+                document.getElementById('preview-activity-name').textContent = document.getElementById('cert-activity-name').value;
+                document.getElementById('preview-achievement').textContent = document.getElementById('cert-achievement').value;
+            };
+
+            const updateCommTemplate = (templateKey) => {
+                const templates = {
+                    'new-club': `Subject: Announcing Our New [Club Name]!\n\nDear Parents,\n\nWe are thrilled to announce the launch of a new extracurricular activity at our school: the [Club Name]! This club is a fantastic opportunity for students to develop skills in [Skill 1] and [Skill 2].\n\nMeetings will be held [Day of Week] at [Time] in [Location].\n\nWe look forward to seeing your child there!`,
+                    'volunteer': `Subject: Parent Volunteers Needed for [Event/Club Name]\n\nDear Parents,\n\nOur [Event/Club Name] is looking for parent volunteers to help us with [Specific Task]. Your support is invaluable in making our programs a success.\n\nIf you are interested in helping, please reply to this email. Thank you for your consideration!`,
+                    'update': `Subject: Weekly Update from the [Club Name]\n\nDear Parents,\n\nThis week in the [Club Name], our students worked on [Describe Activity]. It was great to see them practice [Skill] and collaborate on their projects.\n\nNext week, we will be [Preview of Next Activity].\n\nBest regards,`,
+                    'result': `Subject: Great Results from the [Competition/Event Name]!\n\nDear Parents,\n\nWe are incredibly proud to announce the results from the recent [Competition/Event Name]. Our students performed wonderfully, with [Student Name] achieving [Result].\n\nPlease join us in congratulating all the participants on their hard work and dedication!\n\nThank you for your continued support.`
+                };
+                document.getElementById('comm-template-output').value = templates[templateKey] || 'Select a template to see the content here.';
+            };
+            
+            const copyCommTemplate = () => {
+                const textarea = document.getElementById('comm-template-output');
+                textarea.select();
+                document.execCommand('copy');
+                // Could add a "Copied!" message here
+            };
+
+
+            // --- EVENT LISTENERS ---
+            q1Options.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (button) {
+                    state.persona = button.dataset.value;
+                    // Style selected button
+                    q1Options.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-indigo-100', 'border-indigo-500'));
+                    button.classList.add('bg-indigo-100', 'border-indigo-500');
+                    q2Container.classList.remove('hidden');
+                    q2Container.classList.add('fade-in');
+                }
+            });
+
+            q2Options.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (button) {
+                    state.priority = button.dataset.value;
+                    // Style selected button
+                    q2Options.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-indigo-100', 'border-indigo-500'));
+                    button.classList.add('bg-indigo-100', 'border-indigo-500');
+                    // Transition to dashboard
+                    setTimeout(() => {
+                        updateDashboardUI();
+                        showScreen('dashboard-screen');
+                        lucide.createIcons();
+                    }, 500);
+                }
+            });
+
+            widgetsGrid.addEventListener('click', (e) => {
+                const widget = e.target.closest('.widget');
+                if (!widget) return;
+                
+                const widgetMap = {
+                    'widget-ai-builder': 'aiBuilder',
+                    'widget-gap-analysis': 'gapAnalysis',
+                    'widget-budget-planner': 'budgetPlanner',
+                    'widget-certificate-generator': 'certificateGenerator',
+                    'widget-parent-pack': 'parentPack',
+                    'widget-event-calendar': 'eventCalendar',
+                    'widget-starter-kit': 'starterKit',
+                    'widget-engagement-toolkit': 'engagementToolkit',
+                    'widget-resource-hub': 'resourceHub'
+                };
+                
+                const modalKey = widgetMap[widget.id];
+                if (modalKey) {
+                    openModal(modalKey);
+                }
+            });
+
+            sidebarResourcesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal('resourceHub');
+            });
+
+            // --- INITIALIZATION ---
+            lucide.createIcons();
+
+        });
+    </script>
+</body>
+</html>
