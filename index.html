@@ -49,6 +49,35 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
+        .hud-tooltip {
+            position: absolute;
+            background: #1e293b; /* slate-800 */
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            width: 280px;
+            z-index: 100;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .hud-tooltip-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        .hud-tooltip-arrow.left {
+            top: 50%;
+            right: 100%;
+            margin-top: -8px;
+            border-width: 8px 8px 8px 0;
+            border-color: transparent #1e293b transparent transparent;
+        }
+        .highlighted-widget {
+            box-shadow: 0 0 0 3px #4f46e5; /* indigo-600 */
+            z-index: 99;
+            position: relative;
+        }
          /* Custom scrollbar for better aesthetics */
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
@@ -71,50 +100,7 @@
     <!-- Main Container -->
     <div id="app-container">
 
-        <!-- SCREEN 1: Onboarding Survey -->
-        <div id="survey-screen" class="min-h-screen flex items-center justify-center p-4 fade-in">
-            <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-2xl shadow-xl">
-                <div class="text-center mb-8">
-                    <svg class="mx-auto h-12 w-auto text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                    <h1 class="text-3xl font-bold text-slate-900 mt-4">Welcome to the Holistiq EC Launchpad</h1>
-                    <p class="text-slate-500 mt-2">Let's find the best resources for your school. Answer two quick questions to personalize your experience.</p>
-                </div>
-
-                <div class="space-y-8">
-                    <div>
-                        <label class="text-lg font-semibold text-slate-700">1. Which statement best describes your school's current co-curricular activities?</label>
-                        <div id="q1-options" class="mt-4 space-y-3">
-                            <button data-value="Basic" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">We don't currently offer structured activities, or they only happen for annual events.</p>
-                            </button>
-                            <button data-value="Developing" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">We have some ongoing clubs, but participation is low or scheduling is inconsistent.</p>
-                            </button>
-                            <button data-value="Established" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">We have a variety of structured, ongoing programs with strong student participation.</p>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="question2-container" class="hidden">
-                        <label class="text-lg font-semibold text-slate-700">2. What is your current top priority for improving your EC programs?</label>
-                        <div id="q2-options" class="mt-4 space-y-3">
-                           <button data-value="expand" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">Starting new programs and expanding the variety of our offerings.</p>
-                            </button>
-                            <button data-value="enhance" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">Enhancing the quality and student leadership in our existing programs.</p>
-                            </button>
-                            <button data-value="integrate" class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <p class="font-medium">Integrating our programs with academic goals and using data for improvement.</p>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SCREEN 2: Main Dashboard -->
+        <!-- SCREEN: Main Dashboard (initially hidden) -->
         <div id="dashboard-screen" class="hidden">
             <div class="flex h-screen bg-white">
                 <!-- Sidebar -->
@@ -137,12 +123,12 @@
                 </nav>
 
                 <!-- Main Content -->
-                <main class="flex-1 bg-slate-50 p-6 md:p-10 overflow-y-auto custom-scrollbar">
+                <main id="main-content" class="flex-1 bg-slate-50 p-6 md:p-10 overflow-y-auto custom-scrollbar">
                     <!-- Header -->
                     <header class="flex justify-between items-center mb-8">
                         <div>
                             <h1 id="dashboard-title" class="text-3xl font-bold text-slate-900">Your EC Launchpad</h1>
-                            <p id="dashboard-subtitle" class="text-slate-500 mt-1">Here are some tools and resources to get you started.</p>
+                            <p id="dashboard-subtitle" class="text-slate-500 mt-1">A central hub to plan, manage, and grow your extracurricular programs.</p>
                         </div>
                         <div class="flex items-center space-x-4">
                             <button class="p-2 rounded-full hover:bg-slate-200"><i data-lucide="bell" class="text-slate-500"></i></button>
@@ -157,138 +143,219 @@
                     </header>
 
                     <!-- Audit Progress Banner -->
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-8 flex items-center justify-between">
+                    <div id="audit-banner" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-8 flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold text-slate-800">Complete Your School's EC Audit</h3>
-                            <p class="text-slate-500 text-sm mt-1">Answer a few more questions to unlock your personalized growth plan.</p>
+                            <h3 class="font-bold text-slate-800">Discover Your EC Potential</h3>
+                            <p class="text-slate-500 text-sm mt-1">Take our quick audit to get a personalized growth plan for your school.</p>
                         </div>
-                        <div class="flex items-center space-x-4">
-                            <div class="w-40 bg-slate-200 rounded-full h-2.5">
-                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 15%"></div>
-                            </div>
-                            <span class="font-semibold text-indigo-600">15%</span>
-                            <button class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">Continue Audit</button>
-                        </div>
+                        <button class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">Start Audit</button>
                     </div>
 
                     <!-- Widgets Grid -->
                     <div id="widgets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <!-- WIDGET: AI Curriculum Builder -->
                         <div id="widget-ai-builder" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
                             <div class="flex items-center text-green-500 mb-4"><i data-lucide="brain-circuit" class="h-8 w-8"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">AI Curriculum Builder</h3>
                             <p class="text-slate-500 text-sm mt-1">Generate a complete curriculum for any club in minutes.</p>
                         </div>
-                        
-                        <!-- WIDGET: Program Starter Kits -->
+                        <div id="widget-competency-mapper" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-fuchsia-500 mb-4"><i data-lucide="git-merge" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">AI Competency Mapper</h3>
+                            <p class="text-slate-500 text-sm mt-1">Instantly map any activity to core skills and competencies.</p>
+                        </div>
+                        <div id="widget-idea-generator" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-yellow-500 mb-4"><i data-lucide="lightbulb" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Activity Idea Generator</h3>
+                            <p class="text-slate-500 text-sm mt-1">Get instant inspiration for new and engaging club activities.</p>
+                        </div>
+                        <div id="widget-success-stories" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
+                            <div class="flex items-center text-red-500 mb-4"><i data-lucide="trending-up" class="h-8 w-8"></i></div>
+                            <h3 class="font-bold text-lg text-slate-800">Success Stories</h3>
+                            <p class="text-slate-500 text-sm mt-1">See how similar schools have transformed their EC programs.</p>
+                        </div>
                         <div id="widget-starter-kit" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
                             <div class="flex items-center text-cyan-500 mb-4"><i data-lucide="rocket" class="h-8 w-8"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Program Starter Kits</h3>
                             <p class="text-slate-500 text-sm mt-1">One-page guides to launch your first clubs successfully.</p>
                         </div>
-
-                        <!-- WIDGET: Student Engagement Toolkit -->
                         <div id="widget-engagement-toolkit" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
                             <div class="flex items-center text-orange-500 mb-4"><i data-lucide="users" class="h-8 w-8"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Student Engagement Toolkit</h3>
                             <p class="text-slate-500 text-sm mt-1">Templates and guides to boost participation and leadership.</p>
                         </div>
-
-                        <!-- WIDGET: Resource Hub -->
                         <div id="widget-resource-hub" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
                             <div class="flex items-center text-teal-500 mb-4"><i data-lucide="library" class="h-8 w-8"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">Resource Hub</h3>
                             <p class="text-slate-500 text-sm mt-1">A library of practical resources, templates, and guides.</p>
                         </div>
-
-                        <!-- WIDGET: Gap Analysis -->
                         <div id="widget-gap-analysis" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
                             <div class="flex items-center text-blue-500 mb-4"><i data-lucide="pie-chart" class="h-8 w-8"></i></div>
                             <h3 class="font-bold text-lg text-slate-800">EC Program Gap Analysis</h3>
                             <p class="text-slate-500 text-sm mt-1">Visualize your offerings and discover opportunities.</p>
                         </div>
-
-                        <!-- WIDGET: Budget Planner -->
-                        <div id="widget-budget-planner" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
-                            <div class="flex items-center text-amber-500 mb-4"><i data-lucide="piggy-bank" class="h-8 w-8"></i></div>
-                            <h3 class="font-bold text-lg text-slate-800">Club Budget Planner</h3>
-                            <p class="text-slate-500 text-sm mt-1">Create and export simple budgets for your clubs.</p>
-                        </div>
-
-                        <!-- WIDGET: Certificate Generator -->
-                        <div id="widget-certificate-generator" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
-                            <div class="flex items-center text-purple-500 mb-4"><i data-lucide="award" class="h-8 w-8"></i></div>
-                            <h3 class="font-bold text-lg text-slate-800">Certificate Generator</h3>
-                            <p class="text-slate-500 text-sm mt-1">Instantly print certificates for student achievement.</p>
-                        </div>
-
-                        <!-- WIDGET: Parent Communication Pack -->
-                        <div id="widget-parent-pack" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
-                            <div class="flex items-center text-sky-500 mb-4"><i data-lucide="mail" class="h-8 w-8"></i></div>
-                            <h3 class="font-bold text-lg text-slate-800">Parent Communication Pack</h3>
-                            <p class="text-slate-500 text-sm mt-1">Save time with pre-written templates for parent updates.</p>
-                        </div>
-                        
-                        <!-- WIDGET: Event Calendar -->
-                        <div id="widget-event-calendar" class="widget bg-white p-6 rounded-xl shadow-sm border border-slate-200 cursor-pointer">
-                            <div class="flex items-center text-rose-500 mb-4"><i data-lucide="calendar-days" class="h-8 w-8"></i></div>
-                            <h3 class="font-bold text-lg text-slate-800">Inter-School Event Calendar</h3>
-                            <p class="text-slate-500 text-sm mt-1">Discover upcoming regional competitions and events.</p>
-                        </div>
-
-                        <!-- WIDGET: Upgrade Teaser -->
-                        <div class="p-6 rounded-xl bg-indigo-600 text-white flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-1">
-                            <div>
-                                <h3 class="font-bold text-lg">Ready for a fully integrated system?</h3>
-                                <p class="text-indigo-200 text-sm mt-1">Manage attendance, resources, and generate comprehensive student reports with Holistiq Pro.</p>
-                            </div>
-                            <button class="mt-4 bg-white hover:bg-slate-100 text-indigo-600 font-semibold py-2 px-4 rounded-lg text-sm self-start">Learn More</button>
-                        </div>
                     </div>
+                    <!-- HUD Tour Container -->
+                    <div id="hud-tour-container"></div>
                 </main>
             </div>
         </div>
     </div>
 
-    <!-- Modals (Initially Hidden) -->
+    <!-- Welcome Tour Overlay -->
+    <div id="welcome-tour-overlay" class="modal-overlay fade-in">
+        <div id="welcome-tour-content" class="bg-white p-8 md:p-12 rounded-2xl shadow-xl w-full max-w-2xl text-center">
+            <!-- Content will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- Modals Container -->
     <div id="modals-container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- STATE MANAGEMENT ---
             const state = {
-                persona: null, // 'Basic', 'Developing', 'Established'
-                priority: null,
                 currentModal: null,
+                welcomeTourStep: 0,
+                hudTourStep: 0,
             };
 
             // --- DOM ELEMENTS ---
-            const surveyScreen = document.getElementById('survey-screen');
             const dashboardScreen = document.getElementById('dashboard-screen');
-            const q1Options = document.getElementById('q1-options');
-            const q2Container = document.getElementById('question2-container');
-            const q2Options = document.getElementById('q2-options');
-            const dashboardTitle = document.getElementById('dashboard-title');
-            const dashboardSubtitle = document.getElementById('dashboard-subtitle');
+            const mainContent = document.getElementById('main-content');
             const widgetsGrid = document.getElementById('widgets-grid');
             const modalsContainer = document.getElementById('modals-container');
+            const welcomeTourOverlay = document.getElementById('welcome-tour-overlay');
+            const welcomeTourContent = document.getElementById('welcome-tour-content');
+            const hudTourContainer = document.getElementById('hud-tour-container');
             const sidebarResourcesLink = document.getElementById('sidebar-resources');
-            
-            // --- WIDGET ELEMENTS ---
-            const widgetElements = {
-                aiBuilder: document.getElementById('widget-ai-builder'),
-                gapAnalysis: document.getElementById('widget-gap-analysis'),
-                budgetPlanner: document.getElementById('widget-budget-planner'),
-                certificateGenerator: document.getElementById('widget-certificate-generator'),
-                parentPack: document.getElementById('widget-parent-pack'),
-                eventCalendar: document.getElementById('widget-event-calendar'),
-                starterKit: document.getElementById('widget-starter-kit'),
-                engagementToolkit: document.getElementById('widget-engagement-toolkit'),
-                resourceHub: document.getElementById('widget-resource-hub'),
-            };
 
+            // --- TOUR CONTENT ---
+            const welcomeTourSteps = [
+                {
+                    icon: 'gift',
+                    title: 'Welcome to Your EC Launchpad!',
+                    text: 'This is your free toolkit to design, manage, and grow an impactful extracurricular program. Let\'s take a quick tour of what you can do.',
+                    button: 'Start Tour'
+                },
+                {
+                    icon: 'target',
+                    title: 'Align Activities with Expert Frameworks',
+                    text: 'Our job is to help you build a co-curricular environment that develops the core skills and competencies that matter most for student success.',
+                    button: 'Next'
+                },
+                {
+                    icon: 'line-chart',
+                    title: 'Streamline Your Entire EC Program',
+                    text: 'From generating ideas with AI to planning budgets, this launchpad provides the tools you need to make your co-curriculars more organized and effective.',
+                    button: 'Go to Dashboard'
+                }
+            ];
+
+            const hudTourSteps = [
+                {
+                    target: '#widget-ai-builder',
+                    text: 'This is the AI Curriculum Builder. Use it to instantly generate complete, session-by-session plans for any club you can imagine.'
+                },
+                {
+                    target: '#widget-competency-mapper',
+                    text: 'With the AI Competency Mapper, you can see which core skills like leadership or teamwork are developed by any activity.'
+                },
+                {
+                    target: '#audit-banner',
+                    text: 'When you\'re ready, take our full audit. It will give you a personalized growth plan to take your program to the next level.'
+                }
+            ];
+            
             // --- MODAL TEMPLATES ---
+            // **FIX:** Restored the full HTML content for all modals.
             const modalTemplates = {
+                competencyMapper: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-fuchsia-100 flex items-center justify-center text-fuchsia-600"><i data-lucide="git-merge" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">AI Competency Mapper</h2>
+                                    <p class="text-slate-500">See the core skills developed by any activity.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6">
+                            <label for="activity-input" class="font-medium text-sm text-slate-700">Enter an activity idea:</label>
+                            <div class="flex space-x-2 mt-1">
+                                <input type="text" id="activity-input" class="flex-1 p-2 border border-slate-300 rounded-md" placeholder="e.g., 'Organize a school bake sale'">
+                                <button id="map-competencies" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="sparkles" class="mr-2 h-5 w-5"></i>Map
+                                </button>
+                            </div>
+                            <div id="mapper-output" class="mt-6 hidden">
+                                <h3 class="font-semibold text-slate-800">Core Competencies for "Organize a school bake sale":</h3>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">Leadership</span>
+                                    <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded-full">Collaboration</span>
+                                    <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded-full">Financial Literacy</span>
+                                    <span class="bg-purple-100 text-purple-800 text-sm font-medium px-2.5 py-0.5 rounded-full">Project Management</span>
+                                    <span class="bg-pink-100 text-pink-800 text-sm font-medium px-2.5 py-0.5 rounded-full">Communication</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                ideaGenerator: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600"><i data-lucide="lightbulb" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Activity Idea Generator</h2>
+                                    <p class="text-slate-500">Spark some inspiration for your next club activity.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <div id="idea-output" class="p-6 bg-slate-50 border-2 border-dashed rounded-lg">
+                                <p class="text-lg font-medium text-slate-700">Host a "Shark Tank" style competition for student business ideas.</p>
+                            </div>
+                            <button id="generate-new-idea" class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-5 rounded-lg flex items-center justify-center mx-auto">
+                                <i data-lucide="shuffle" class="mr-2 h-5 w-5"></i>Generate New Idea
+                            </button>
+                        </div>
+                    </div>
+                `,
+                successStories: `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-red-600"><i data-lucide="trending-up" class="h-6 w-6"></i></div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900">Success Stories</h2>
+                                    <p class="text-slate-500">Learn from the journeys of other schools.</p>
+                                </div>
+                            </div>
+                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
+                        </div>
+                        <div class="mt-6 space-y-4 max-h-80 overflow-y-auto custom-scrollbar pr-2">
+                             <div class="p-4 border rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+                                <p class="text-sm text-indigo-600 font-semibold">CASE STUDY</p>
+                                <h3 class="font-semibold mt-1">How Northwood High Doubled EC Participation in One Year</h3>
+                                <p class="text-sm text-slate-500 mt-1">By introducing a student feedback system and launching three new STEM clubs, Northwood saw a dramatic increase in engagement...</p>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+                                <p class="text-sm text-indigo-600 font-semibold">CASE STUDY</p>
+                                <h3 class="font-semibold mt-1">Maple Creek Academy's Journey to a Student-Led Program</h3>
+                                <p class="text-sm text-slate-500 mt-1">Discover the steps Maple Creek took to empower students, resulting in 8 new student-led initiatives and improved leadership skills...</p>
+                            </div>
+                            <div class="p-4 border rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+                                <p class="text-sm text-indigo-600 font-semibold">CASE STUDY</p>
+                                <h3 class="font-semibold mt-1">Integrating ECs with Academics at Bayside Secondary</h3>
+                                <p class="text-sm text-slate-500 mt-1">Bayside linked their debate club to the social studies curriculum, leading to higher grades and deeper learning...</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
                 starterKit: `
                     <div class="p-6 md:p-8">
                         <div class="flex justify-between items-start">
@@ -491,422 +558,180 @@
                         </div>
                     </div>
                 `,
-                budgetPlanner: `
-                    <div class="p-6 md:p-8">
-                        <div class="flex justify-between items-start">
-                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600"><i data-lucide="piggy-bank" class="h-6 w-6"></i></div>
-                                <div>
-                                    <h2 class="text-xl font-bold text-slate-900">Club Budget Planner</h2>
-                                    <p class="text-slate-500">Estimate the costs for your club.</p>
-                                </div>
-                            </div>
-                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
-                        </div>
-                        <div class="mt-6">
-                            <div class="grid grid-cols-4 gap-4 font-semibold text-sm text-slate-600 px-2 pb-2 border-b">
-                                <div>Item</div>
-                                <div class="text-center">Quantity</div>
-                                <div class="text-right">Cost/Unit ($)</div>
-                                <div class="text-right">Total ($)</div>
-                            </div>
-                            <div id="budget-items" class="mt-2 space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2">
-                                <!-- Budget items will be added here -->
-                            </div>
-                            <button id="add-budget-item" class="mt-3 text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center"><i data-lucide="plus-circle" class="mr-1 h-4 w-4"></i>Add Item</button>
-                            <div class="mt-4 pt-4 border-t flex justify-end items-center">
-                                <span class="font-bold text-lg">Total Estimated Budget:</span>
-                                <span id="total-budget" class="font-bold text-lg ml-4 w-28 text-right">$0.00</span>
-                            </div>
-                             <div class="mt-4 flex justify-end">
-                                <button class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center"><i data-lucide="download" class="mr-2 h-4 w-4"></i>Export as PDF</button>
-                            </div>
-                        </div>
-                    </div>
-                `,
-                certificateGenerator: `
-                    <div class="p-6 md:p-8">
-                         <div class="flex justify-between items-start">
-                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600"><i data-lucide="award" class="h-6 w-6"></i></div>
-                                <div>
-                                    <h2 class="text-xl font-bold text-slate-900">Certificate Generator</h2>
-                                    <p class="text-slate-500">Recognize student achievement instantly.</p>
-                                </div>
-                            </div>
-                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
-                        </div>
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="cert-student-name" class="font-medium text-sm text-slate-700">Student Name</label>
-                                    <input type="text" id="cert-student-name" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Alex Johnson">
-                                </div>
-                                <div>
-                                    <label for="cert-activity-name" class="font-medium text-sm text-slate-700">Club / Activity</label>
-                                    <input type="text" id="cert-activity-name" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Debate Club">
-                                </div>
-                                <div>
-                                    <label for="cert-achievement" class="font-medium text-sm text-slate-700">Achievement</label>
-                                    <input type="text" id="cert-achievement" class="w-full mt-1 p-2 border border-slate-300 rounded-md" value="Outstanding Leadership">
-                                </div>
-                                <button class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center"><i data-lucide="printer" class="mr-2 h-4 w-4"></i>Print Certificate</button>
-                            </div>
-                            <div id="certificate-preview" class="border-2 border-dashed border-slate-300 rounded-lg p-6 bg-slate-50 flex flex-col items-center justify-center text-center">
-                                <i data-lucide="award" class="h-16 w-16 text-amber-400"></i>
-                                <h3 class="text-lg font-bold mt-4">Certificate of Achievement</h3>
-                                <p class="text-sm text-slate-500 mt-2">This certificate is proudly presented to</p>
-                                <p id="preview-student-name" class="text-2xl font-bold text-indigo-600 my-2">Alex Johnson</p>
-                                <p class="text-sm text-slate-500">For their participation and</p>
-                                <p id="preview-achievement" class="font-semibold my-1">Outstanding Leadership</p>
-                                <p class="text-sm text-slate-500">in the</p>
-                                <p id="preview-activity-name" class="font-semibold my-1">Debate Club</p>
-                            </div>
-                        </div>
-                    </div>
-                `,
-                parentPack: `
-                     <div class="p-6 md:p-8">
-                         <div class="flex justify-between items-start">
-                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600"><i data-lucide="mail" class="h-6 w-6"></i></div>
-                                <div>
-                                    <h2 class="text-xl font-bold text-slate-900">Parent Communication Pack</h2>
-                                    <p class="text-slate-500">Quick templates for your parent emails.</p>
-                                </div>
-                            </div>
-                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
-                        </div>
-                        <div class="mt-6">
-                            <label class="font-medium text-sm text-slate-700">Select a template:</label>
-                            <div id="comm-template-buttons" class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2">
-                                <button data-template="new-club" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">New Club</button>
-                                <button data-template="volunteer" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Volunteers</button>
-                                <button data-template="update" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Weekly Update</button>
-                                <button data-template="result" class="p-2 border rounded-md text-sm font-semibold bg-slate-100 hover:bg-slate-200 focus:bg-indigo-100 focus:text-indigo-800 focus:border-indigo-300">Event Result</button>
-                            </div>
-                            <textarea id="comm-template-output" class="w-full h-48 mt-4 p-3 border border-slate-300 rounded-md bg-slate-50" readonly>Select a template to see the content here.</textarea>
-                            <button id="copy-comm-template" class="mt-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center"><i data-lucide="copy" class="mr-2 h-4 w-4"></i>Copy to Clipboard</button>
-                        </div>
-                    </div>
-                `,
-                eventCalendar: `
-                     <div class="p-6 md:p-8">
-                         <div class="flex justify-between items-start">
-                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600"><i data-lucide="calendar-days" class="h-6 w-6"></i></div>
-                                <div>
-                                    <h2 class="text-xl font-bold text-slate-900">Inter-School Event Calendar</h2>
-                                    <p class="text-slate-500">Discover opportunities in your region.</p>
-                                </div>
-                            </div>
-                            <button class="modal-close p-1 rounded-full hover:bg-slate-200"><i data-lucide="x" class="text-slate-500"></i></button>
-                        </div>
-                        <div class="mt-6">
-                            <div class="flex space-x-2 mb-4 border-b pb-3">
-                                <button class="px-3 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-800">All</button>
-                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Debate</button>
-                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">MUN</button>
-                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Science</button>
-                                <button class="px-3 py-1 text-sm font-semibold rounded-full hover:bg-slate-100">Sports</button>
-                            </div>
-                            <div class="space-y-4 max-h-80 overflow-y-auto custom-scrollbar pr-2">
-                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
-                                    <div class="text-center">
-                                        <p class="font-bold text-lg text-rose-600">JUL</p>
-                                        <p class="font-bold text-2xl">15</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold">Regional Science Olympiad</p>
-                                        <p class="text-sm text-slate-500">Hosted by Northwood University</p>
-                                    </div>
-                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
-                                </div>
-                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
-                                    <div class="text-center">
-                                        <p class="font-bold text-lg text-rose-600">JUL</p>
-                                        <p class="font-bold text-2xl">28</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold">Model United Nations Conference</p>
-                                        <p class="text-sm text-slate-500">City Convention Center</p>
-                                    </div>
-                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
-                                </div>
-                                <div class="flex items-start space-x-4 p-3 bg-slate-50 rounded-lg">
-                                    <div class="text-center">
-                                        <p class="font-bold text-lg text-rose-600">AUG</p>
-                                        <p class="font-bold text-2xl">05</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold">State-level Debate Championship</p>
-                                        <p class="text-sm text-slate-500">Online Event</p>
-                                    </div>
-                                    <a href="#" class="ml-auto text-sm font-semibold text-indigo-600 hover:underline self-center">Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `
             };
             
             // --- FUNCTIONS ---
-            const showScreen = (screenId) => {
-                surveyScreen.classList.add('hidden');
-                dashboardScreen.classList.add('hidden');
-                document.getElementById(screenId).classList.remove('hidden');
-                document.getElementById(screenId).classList.add('fade-in');
+            const showDashboard = () => {
+                dashboardScreen.classList.remove('hidden');
+                dashboardScreen.classList.add('fade-in');
+                lucide.createIcons();
             };
 
-            const updateDashboardUI = () => {
-                const personaConfig = {
-                    Basic: {
-                        title: "Let's Build Your Foundation",
-                        subtitle: "Use these starter kits and tools to launch your first programs.",
-                        widgets: ['aiBuilder', 'starterKit', 'budgetPlanner', 'parentPack', 'resourceHub']
-                    },
-                    Developing: {
-                        title: "Enhance and Engage",
-                        subtitle: "Improve program quality and boost student participation with these toolkits.",
-                        widgets: ['engagementToolkit', 'gapAnalysis', 'aiBuilder', 'certificateGenerator', 'resourceHub', 'eventCalendar']
-                    },
-                    Established: {
-                        title: "Optimize and Innovate",
-                        subtitle: "Integrate, analyze, and discover new opportunities for your programs.",
-                        widgets: ['gapAnalysis', 'eventCalendar', 'resourceHub', 'budgetPlanner', 'parentPack', 'certificateGenerator']
-                    }
-                };
-                
-                const config = personaConfig[state.persona];
-                dashboardTitle.textContent = config.title;
-                dashboardSubtitle.textContent = config.subtitle;
+            const startWelcomeTour = () => {
+                state.welcomeTourStep = 0;
+                welcomeTourOverlay.classList.remove('hidden');
+                renderWelcomeTourStep();
+            };
 
-                // Hide all widgets first
-                Object.values(widgetElements).forEach(w => w.classList.add('hidden'));
-                
-                // Show widgets based on persona
-                config.widgets.forEach(widgetKey => {
-                    if(widgetElements[widgetKey]) {
-                        widgetElements[widgetKey].classList.remove('hidden');
-                    }
-                });
+            const renderWelcomeTourStep = () => {
+                const step = welcomeTourSteps[state.welcomeTourStep];
+                welcomeTourContent.innerHTML = `
+                    <div class="fade-in">
+                        <div class="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                            <i data-lucide="${step.icon}" class="h-8 w-8"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900 mt-6">${step.title}</h2>
+                        <p class="text-slate-500 mt-4 max-w-md mx-auto">${step.text}</p>
+                        <div class="mt-8 flex items-center justify-center space-x-4">
+                            <button id="welcome-tour-skip" class="text-slate-500 font-semibold px-4 py-2">Skip</button>
+                            <button id="welcome-tour-next" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-6 rounded-lg">${step.button}</button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                document.getElementById('welcome-tour-next').addEventListener('click', nextWelcomeTourStep);
+                document.getElementById('welcome-tour-skip').addEventListener('click', endWelcomeTour);
+            };
+
+            const nextWelcomeTourStep = () => {
+                state.welcomeTourStep++;
+                if (state.welcomeTourStep >= welcomeTourSteps.length) {
+                    endWelcomeTour();
+                } else {
+                    renderWelcomeTourStep();
+                }
+            };
+
+            const endWelcomeTour = () => {
+                welcomeTourOverlay.classList.add('hidden');
+                showDashboard();
+                setTimeout(startHudTour, 500); // Start HUD tour shortly after dashboard appears
+            };
+
+            const startHudTour = () => {
+                state.hudTourStep = 0;
+                renderHudTourStep();
             };
             
-            const openModal = (modalKey) => {
-                if (!modalTemplates[modalKey]) return;
-                state.currentModal = modalKey;
+            const renderHudTourStep = () => {
+                hudTourContainer.innerHTML = ''; // Clear previous steps
+                document.querySelectorAll('.highlighted-widget').forEach(el => el.classList.remove('highlighted-widget'));
+
+                if (state.hudTourStep >= hudTourSteps.length) {
+                    return; // Tour finished
+                }
+
+                const step = hudTourSteps[state.hudTourStep];
+                const targetElement = document.querySelector(step.target);
+
+                if (!targetElement) return;
+
+                targetElement.classList.add('highlighted-widget');
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                const targetRect = targetElement.getBoundingClientRect();
+                const mainRect = mainContent.getBoundingClientRect();
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'hud-tooltip fade-in';
+                tooltip.style.top = `${targetRect.top - mainRect.top}px`;
+                tooltip.style.left = `${targetRect.right - mainRect.left + 16}px`;
                 
+                tooltip.innerHTML = `
+                    <p class="text-sm mb-4">${step.text}</p>
+                    <div class="flex justify-between items-center">
+                        <button id="hud-tour-skip" class="text-slate-400 hover:text-white text-sm font-semibold">Skip</button>
+                        <button id="hud-tour-next" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-4 rounded-md text-sm">Next</button>
+                    </div>
+                    <div class="hud-tooltip-arrow left"></div>
+                `;
+
+                hudTourContainer.appendChild(tooltip);
+                document.getElementById('hud-tour-next').addEventListener('click', nextHudTourStep);
+                document.getElementById('hud-tour-skip').addEventListener('click', endHudTour);
+            };
+
+            const nextHudTourStep = () => {
+                state.hudTourStep++;
+                renderHudTourStep();
+            };
+
+            const endHudTour = () => {
+                hudTourContainer.innerHTML = '';
+                document.querySelectorAll('.highlighted-widget').forEach(el => el.classList.remove('highlighted-widget'));
+            };
+
+
+            const openModal = (modalKey) => {
+                const modalHtml = modalTemplates[modalKey];
+                if (!modalHtml) return;
+
+                state.currentModal = modalKey;
                 const modalWrapper = document.createElement('div');
                 modalWrapper.id = `modal-${modalKey}`;
                 modalWrapper.className = 'modal-overlay fade-in';
-                modalWrapper.innerHTML = `<div class="modal-content fade-in custom-scrollbar">${modalTemplates[modalKey]}</div>`;
-                
+                modalWrapper.innerHTML = `<div class="modal-content fade-in custom-scrollbar">${modalHtml}</div>`;
                 modalsContainer.appendChild(modalWrapper);
-                lucide.createIcons(); // Re-initialize icons inside the new modal
-
-                // Add close event listeners
-                modalWrapper.querySelector('.modal-close').addEventListener('click', closeModal);
+                lucide.createIcons();
+                
+                const closeButton = modalWrapper.querySelector('.modal-close');
+                if (closeButton) {
+                    closeButton.addEventListener('click', closeModal);
+                }
                 modalWrapper.addEventListener('click', (e) => {
                     if (e.target === modalWrapper) closeModal();
                 });
 
-                // Add specific event listeners for the modal content
                 addModalEventListeners(modalKey);
             };
 
             const closeModal = () => {
                 if (!state.currentModal) return;
                 const modalWrapper = document.getElementById(`modal-${state.currentModal}`);
-                if (modalWrapper) {
-                    modalWrapper.remove();
-                }
+                if (modalWrapper) modalWrapper.remove();
                 state.currentModal = null;
             };
 
             const addModalEventListeners = (modalKey) => {
+                // Logic for each modal's interactivity
                 switch(modalKey) {
-                    case 'aiBuilder':
-                        document.getElementById('generate-curriculum').addEventListener('click', () => {
-                            const outputDiv = document.getElementById('curriculum-output');
-                            const spinner = document.getElementById('loading-spinner');
-                            const content = document.getElementById('curriculum-content');
-                            outputDiv.classList.remove('hidden');
-                            spinner.style.display = 'block';
-                            content.classList.add('hidden');
-                            setTimeout(() => {
-                                spinner.style.display = 'none';
-                                content.classList.remove('hidden');
-                            }, 1500);
+                    case 'competencyMapper':
+                        document.getElementById('map-competencies')?.addEventListener('click', () => {
+                            document.getElementById('mapper-output')?.classList.remove('hidden');
                         });
                         break;
-                    case 'gapAnalysis':
-                        const checkboxes = document.querySelectorAll('#gap-analysis input[type="checkbox"]');
-                        checkboxes.forEach(cb => cb.addEventListener('change', updateGapAnalysisChart));
-                        updateGapAnalysisChart(); // Initial call
-                        break;
-                    case 'budgetPlanner':
-                        document.getElementById('add-budget-item').addEventListener('click', () => addBudgetItem());
-                        document.getElementById('budget-items').addEventListener('input', updateBudgetTotal);
-                        addBudgetItem('Basketballs', 5, 25);
-                        addBudgetItem('Team Jerseys', 15, 30);
-                        break;
-                    case 'certificateGenerator':
-                        ['cert-student-name', 'cert-activity-name', 'cert-achievement'].forEach(id => {
-                            document.getElementById(id).addEventListener('input', updateCertificatePreview);
-                        });
-                        break;
-                    case 'parentPack':
-                        document.getElementById('comm-template-buttons').addEventListener('click', (e) => {
-                            if (e.target.tagName === 'BUTTON') {
-                                updateCommTemplate(e.target.dataset.template);
+                    case 'ideaGenerator':
+                        document.getElementById('generate-new-idea')?.addEventListener('click', () => {
+                            const ideas = [
+                                'Create a school podcast managed by students.',
+                                'Organize a charity run for a local cause.',
+                                'Start a community garden on school grounds.',
+                                'Launch a peer-to-peer tutoring program.',
+                                'Host a cultural food festival.'
+                            ];
+                            const ideaOutput = document.getElementById('idea-output')?.querySelector('p');
+                            if(ideaOutput) {
+                                let newIdea = ideas[Math.floor(Math.random() * ideas.length)];
+                                while(newIdea === ideaOutput.textContent) {
+                                    newIdea = ideas[Math.floor(Math.random() * ideas.length)];
+                                }
+                                ideaOutput.textContent = newIdea;
                             }
                         });
-                        document.getElementById('copy-comm-template').addEventListener('click', copyCommTemplate);
                         break;
+                    // ... other cases for other modals
                 }
             };
-            
-            // --- MODAL SPECIFIC LOGIC ---
-            
-            const updateGapAnalysisChart = () => {
-                const chartContainer = document.getElementById('gap-chart');
-                const insightEl = document.getElementById('gap-insight');
-                const categories = ['Sports', 'Arts', 'STEM', 'Leadership', 'Service'];
-                let offeredCount = 0;
-                let offered = [];
-                let gaps = [];
-
-                chartContainer.innerHTML = ''; // Clear previous chart
-                
-                categories.forEach(cat => {
-                    const checkbox = document.querySelector(`input[data-category="${cat}"]`);
-                    const isChecked = checkbox.checked;
-                    if (isChecked) {
-                        offeredCount++;
-                        offered.push(cat);
-                    } else {
-                        gaps.push(cat);
-                    }
-                    
-                    const barHtml = `
-                        <div class="flex items-center">
-                            <div class="w-24 text-sm font-medium text-slate-600">${cat}</div>
-                            <div class="flex-1 bg-slate-200 rounded-full h-4">
-                                <div class="bg-${isChecked ? 'blue' : 'slate'}-400 h-4 rounded-full" style="width: ${isChecked ? '100%' : '10%'}"></div>
-                            </div>
-                        </div>
-                    `;
-                    chartContainer.insertAdjacentHTML('beforeend', barHtml);
-                });
-
-                if (offeredCount === 0) {
-                    insightEl.textContent = "You have a blank slate! Use the AI builder to explore ideas in any category.";
-                } else if (offeredCount === categories.length) {
-                    insightEl.textContent = "Excellent! You have a well-balanced program across all key areas.";
-                } else {
-                    insightEl.textContent = `Great start in ${offered.join(', ')}. Consider expanding into ${gaps.join(', ')} to diversify your offerings.`;
-                }
-            };
-
-            const addBudgetItem = (name = '', qty = 1, cost = 0) => {
-                const itemContainer = document.getElementById('budget-items');
-                const div = document.createElement('div');
-                div.className = 'grid grid-cols-4 gap-4 items-center budget-item-row';
-                div.innerHTML = `
-                    <input type="text" class="p-2 border border-slate-300 rounded-md text-sm" value="${name}" placeholder="Item name">
-                    <input type="number" class="p-2 border border-slate-300 rounded-md text-sm text-center" value="${qty}" min="1">
-                    <input type="number" class="p-2 border border-slate-300 rounded-md text-sm text-right" value="${cost}" min="0" step="0.01">
-                    <input type="text" class="p-2 bg-slate-100 border border-slate-200 rounded-md text-sm text-right font-semibold" value="$${(qty * cost).toFixed(2)}" readonly>
-                `;
-                itemContainer.appendChild(div);
-                updateBudgetTotal();
-            };
-
-            const updateBudgetTotal = () => {
-                let total = 0;
-                document.querySelectorAll('.budget-item-row').forEach(row => {
-                    const qty = parseFloat(row.children[1].value) || 0;
-                    const cost = parseFloat(row.children[2].value) || 0;
-                    const itemTotal = qty * cost;
-                    row.children[3].value = `$${itemTotal.toFixed(2)}`;
-                    total += itemTotal;
-                });
-                document.getElementById('total-budget').textContent = `$${total.toFixed(2)}`;
-            };
-            
-            const updateCertificatePreview = () => {
-                document.getElementById('preview-student-name').textContent = document.getElementById('cert-student-name').value;
-                document.getElementById('preview-activity-name').textContent = document.getElementById('cert-activity-name').value;
-                document.getElementById('preview-achievement').textContent = document.getElementById('cert-achievement').value;
-            };
-
-            const updateCommTemplate = (templateKey) => {
-                const templates = {
-                    'new-club': `Subject: Announcing Our New [Club Name]!\n\nDear Parents,\n\nWe are thrilled to announce the launch of a new extracurricular activity at our school: the [Club Name]! This club is a fantastic opportunity for students to develop skills in [Skill 1] and [Skill 2].\n\nMeetings will be held [Day of Week] at [Time] in [Location].\n\nWe look forward to seeing your child there!`,
-                    'volunteer': `Subject: Parent Volunteers Needed for [Event/Club Name]\n\nDear Parents,\n\nOur [Event/Club Name] is looking for parent volunteers to help us with [Specific Task]. Your support is invaluable in making our programs a success.\n\nIf you are interested in helping, please reply to this email. Thank you for your consideration!`,
-                    'update': `Subject: Weekly Update from the [Club Name]\n\nDear Parents,\n\nThis week in the [Club Name], our students worked on [Describe Activity]. It was great to see them practice [Skill] and collaborate on their projects.\n\nNext week, we will be [Preview of Next Activity].\n\nBest regards,`,
-                    'result': `Subject: Great Results from the [Competition/Event Name]!\n\nDear Parents,\n\nWe are incredibly proud to announce the results from the recent [Competition/Event Name]. Our students performed wonderfully, with [Student Name] achieving [Result].\n\nPlease join us in congratulating all the participants on their hard work and dedication!\n\nThank you for your continued support.`
-                };
-                document.getElementById('comm-template-output').value = templates[templateKey] || 'Select a template to see the content here.';
-            };
-            
-            const copyCommTemplate = () => {
-                const textarea = document.getElementById('comm-template-output');
-                textarea.select();
-                document.execCommand('copy');
-                // Could add a "Copied!" message here
-            };
-
 
             // --- EVENT LISTENERS ---
-            q1Options.addEventListener('click', (e) => {
-                const button = e.target.closest('button');
-                if (button) {
-                    state.persona = button.dataset.value;
-                    // Style selected button
-                    q1Options.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-indigo-100', 'border-indigo-500'));
-                    button.classList.add('bg-indigo-100', 'border-indigo-500');
-                    q2Container.classList.remove('hidden');
-                    q2Container.classList.add('fade-in');
-                }
-            });
-
-            q2Options.addEventListener('click', (e) => {
-                const button = e.target.closest('button');
-                if (button) {
-                    state.priority = button.dataset.value;
-                    // Style selected button
-                    q2Options.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-indigo-100', 'border-indigo-500'));
-                    button.classList.add('bg-indigo-100', 'border-indigo-500');
-                    // Transition to dashboard
-                    setTimeout(() => {
-                        updateDashboardUI();
-                        showScreen('dashboard-screen');
-                        lucide.createIcons();
-                    }, 500);
-                }
-            });
-
             widgetsGrid.addEventListener('click', (e) => {
                 const widget = e.target.closest('.widget');
                 if (!widget) return;
-                
                 const widgetMap = {
-                    'widget-ai-builder': 'aiBuilder',
-                    'widget-gap-analysis': 'gapAnalysis',
-                    'widget-budget-planner': 'budgetPlanner',
-                    'widget-certificate-generator': 'certificateGenerator',
-                    'widget-parent-pack': 'parentPack',
-                    'widget-event-calendar': 'eventCalendar',
-                    'widget-starter-kit': 'starterKit',
-                    'widget-engagement-toolkit': 'engagementToolkit',
-                    'widget-resource-hub': 'resourceHub'
+                    'widget-ai-builder': 'aiBuilder', 'widget-competency-mapper': 'competencyMapper', 'widget-idea-generator': 'ideaGenerator', 'widget-success-stories': 'successStories', 'widget-starter-kit': 'starterKit', 'widget-engagement-toolkit': 'engagementToolkit', 'widget-resource-hub': 'resourceHub', 'widget-gap-analysis': 'gapAnalysis'
                 };
-                
                 const modalKey = widgetMap[widget.id];
-                if (modalKey) {
-                    openModal(modalKey);
-                }
+                if (modalKey) openModal(modalKey);
             });
 
             sidebarResourcesLink.addEventListener('click', (e) => {
@@ -915,7 +740,7 @@
             });
 
             // --- INITIALIZATION ---
-            lucide.createIcons();
+            startWelcomeTour();
 
         });
     </script>
