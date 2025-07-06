@@ -49,8 +49,17 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
+        #hud-tour-container.active {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6); /* slate-900 with opacity */
+            z-index: 90;
+        }
         .hud-tooltip {
-            position: absolute;
+            position: fixed; /* Changed from absolute to fixed */
             background: #1e293b; /* slate-800 */
             color: white;
             padding: 1rem;
@@ -58,7 +67,7 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
             width: 280px;
             z-index: 100;
-            transition: opacity 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
         }
         .hud-tooltip-arrow {
             position: absolute;
@@ -73,10 +82,32 @@
             border-width: 8px 8px 8px 0;
             border-color: transparent #1e293b transparent transparent;
         }
-        .highlighted-widget {
+        .hud-tooltip-arrow.right {
+            top: 50%;
+            left: 100%;
+            margin-top: -8px;
+            border-width: 8px 0 8px 8px;
+            border-color: transparent transparent transparent #1e293b;
+        }
+        .hud-tooltip-arrow.bottom {
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px 8px 0 8px;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        .hud-tooltip-arrow.top {
+            bottom: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 0 8px 8px 8px;
+            border-color: transparent transparent #1e293b transparent;
+        }
+        .highlighted-element {
             box-shadow: 0 0 0 3px #4f46e5; /* indigo-600 */
             z-index: 99;
             position: relative;
+            background: white; /* Ensure highlighted element has solid background */
         }
          /* Custom scrollbar for better aesthetics */
         .custom-scrollbar::-webkit-scrollbar {
@@ -194,22 +225,24 @@
                             <p class="text-slate-500 text-sm mt-1">Visualize your offerings and discover opportunities.</p>
                         </div>
                     </div>
-                    <!-- HUD Tour Container -->
-                    <div id="hud-tour-container"></div>
                 </main>
             </div>
         </div>
     </div>
 
-    <!-- Welcome Tour Overlay -->
-    <div id="welcome-tour-overlay" class="modal-overlay fade-in">
-        <div id="welcome-tour-content" class="bg-white p-8 md:p-12 rounded-2xl shadow-xl w-full max-w-2xl text-center">
-            <!-- Content will be injected by JS -->
+    <!-- Tour & Modals Container -->
+    <div id="overlay-container">
+        <!-- Welcome Tour Overlay -->
+        <div id="welcome-tour-overlay" class="modal-overlay fade-in">
+            <div id="welcome-tour-content" class="bg-white p-8 md:p-12 rounded-2xl shadow-xl w-full max-w-2xl text-center">
+                <!-- Content will be injected by JS -->
+            </div>
         </div>
+        <!-- HUD Tour Container -->
+        <div id="hud-tour-container"></div>
+        <!-- Modals Container -->
+        <div id="modals-container"></div>
     </div>
-
-    <!-- Modals Container -->
-    <div id="modals-container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -222,7 +255,6 @@
 
             // --- DOM ELEMENTS ---
             const dashboardScreen = document.getElementById('dashboard-screen');
-            const mainContent = document.getElementById('main-content');
             const widgetsGrid = document.getElementById('widgets-grid');
             const modalsContainer = document.getElementById('modals-container');
             const welcomeTourOverlay = document.getElementById('welcome-tour-overlay');
@@ -268,7 +300,6 @@
             ];
             
             // --- MODAL TEMPLATES ---
-            // **FIX:** Restored the full HTML content for all modals.
             const modalTemplates = {
                 competencyMapper: `
                     <div class="p-6 md:p-8">
@@ -569,7 +600,7 @@
 
             const startWelcomeTour = () => {
                 state.welcomeTourStep = 0;
-                welcomeTourOverlay.classList.remove('hidden');
+                welcomeTourOverlay.style.display = 'flex';
                 renderWelcomeTourStep();
             };
 
@@ -603,50 +634,100 @@
             };
 
             const endWelcomeTour = () => {
-                welcomeTourOverlay.classList.add('hidden');
+                welcomeTourOverlay.style.display = 'none';
                 showDashboard();
                 setTimeout(startHudTour, 500); // Start HUD tour shortly after dashboard appears
             };
 
             const startHudTour = () => {
                 state.hudTourStep = 0;
+                hudTourContainer.classList.add('active');
                 renderHudTourStep();
             };
             
             const renderHudTourStep = () => {
-                hudTourContainer.innerHTML = ''; // Clear previous steps
-                document.querySelectorAll('.highlighted-widget').forEach(el => el.classList.remove('highlighted-widget'));
+                // Clear previous step's tooltip
+                const existingTooltip = hudTourContainer.querySelector('.hud-tooltip');
+                if (existingTooltip) existingTooltip.remove();
+                
+                // Clear previous highlight
+                document.querySelectorAll('.highlighted-element').forEach(el => {
+                    el.classList.remove('highlighted-element');
+                    // Reset background for widgets specifically
+                    if(el.classList.contains('widget')) {
+                        el.style.background = '';
+                    }
+                });
 
                 if (state.hudTourStep >= hudTourSteps.length) {
-                    return; // Tour finished
+                    endHudTour();
+                    return; 
                 }
 
                 const step = hudTourSteps[state.hudTourStep];
                 const targetElement = document.querySelector(step.target);
 
-                if (!targetElement) return;
+                if (!targetElement) {
+                    endHudTour();
+                    return;
+                }
 
-                targetElement.classList.add('highlighted-widget');
+                targetElement.classList.add('highlighted-element');
+                // For widgets, explicitly set background to override the overlay effect
+                if(targetElement.classList.contains('widget') || targetElement.id === 'audit-banner') {
+                    targetElement.style.background = 'white';
+                }
+                
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                 const targetRect = targetElement.getBoundingClientRect();
-                const mainRect = mainContent.getBoundingClientRect();
-
+                
                 const tooltip = document.createElement('div');
                 tooltip.className = 'hud-tooltip fade-in';
-                tooltip.style.top = `${targetRect.top - mainRect.top}px`;
-                tooltip.style.left = `${targetRect.right - mainRect.left + 16}px`;
                 
-                tooltip.innerHTML = `
+                const tooltipContent = `
                     <p class="text-sm mb-4">${step.text}</p>
                     <div class="flex justify-between items-center">
                         <button id="hud-tour-skip" class="text-slate-400 hover:text-white text-sm font-semibold">Skip</button>
                         <button id="hud-tour-next" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1.5 px-4 rounded-md text-sm">Next</button>
                     </div>
-                    <div class="hud-tooltip-arrow left"></div>
                 `;
 
+                // --- Smart Positioning Logic ---
+                const tooltipWidth = 280;
+                const tooltipHeight = 110; // Approximate height
+                const margin = 16;
+                let arrowClass = '';
+
+                // Try right
+                if (window.innerWidth - targetRect.right > tooltipWidth + margin) {
+                    tooltip.style.left = `${targetRect.right + margin}px`;
+                    tooltip.style.top = `${targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2)}px`;
+                    arrowClass = 'left';
+                } 
+                // Try left
+                else if (targetRect.left > tooltipWidth + margin) {
+                    tooltip.style.left = `${targetRect.left - tooltipWidth - margin}px`;
+                    tooltip.style.top = `${targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2)}px`;
+                    arrowClass = 'right';
+                }
+                // Try bottom
+                else if (window.innerHeight - targetRect.bottom > tooltipHeight + margin) {
+                    tooltip.style.top = `${targetRect.bottom + margin}px`;
+                    tooltip.style.left = `${targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2)}px`;
+                    arrowClass = 'top';
+                }
+                // Default to top
+                else {
+                    tooltip.style.top = `${targetRect.top - tooltipHeight - margin}px`;
+                    tooltip.style.left = `${targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2)}px`;
+                    arrowClass = 'bottom';
+                }
+                
+                tooltip.innerHTML = tooltipContent + `<div class="hud-tooltip-arrow ${arrowClass}"></div>`;
+
                 hudTourContainer.appendChild(tooltip);
+                lucide.createIcons();
                 document.getElementById('hud-tour-next').addEventListener('click', nextHudTourStep);
                 document.getElementById('hud-tour-skip').addEventListener('click', endHudTour);
             };
@@ -657,8 +738,15 @@
             };
 
             const endHudTour = () => {
-                hudTourContainer.innerHTML = '';
-                document.querySelectorAll('.highlighted-widget').forEach(el => el.classList.remove('highlighted-widget'));
+                hudTourContainer.classList.remove('active');
+                const existingTooltip = hudTourContainer.querySelector('.hud-tooltip');
+                if (existingTooltip) existingTooltip.remove();
+                document.querySelectorAll('.highlighted-element').forEach(el => {
+                    el.classList.remove('highlighted-element');
+                    if(el.classList.contains('widget')) {
+                        el.style.background = '';
+                    }
+                });
             };
 
 
